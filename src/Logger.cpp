@@ -42,25 +42,52 @@ current_date_time ()
     return std::format( "{:%Y-%m-%d %H:%M:%S}", tp );
 }
 
-void
-Logger::set_current_log_level ( log_level l_log_level )
+std::string
+ansi_colors::color_to_string ( colors_codes code )
 {
-    current_log_level = l_log_level;
+    std::string s = "\033[" + std::to_string( static_cast<int>(code) ) + "m";
+    return s;
+}
+
+
+void
+Logger::set_current_log_level ( LogLevel l_log_level )
+{
+    m_current_log_level = l_log_level;
 };
 
 void
 Logger::INFO ( const std::string &text )
 {
-    logger( e_INFO, text );
+    logger( LogLevel::e_INFO, text );
 };
 
 void
-Logger::logger ( log_level l_log_level, const std::string &text )
+Logger::logger ( LogLevel l_log_level, const std::string &text )
 {
-
-
+    if ( l_log_level < m_current_log_level )
+        return;
 
 };
 
+std::string
+Logger::level_to_string ( LogLevel l_log_level )
+{
+    switch ( l_log_level )
+    {
+        case LogLevel::e_DEBUG:
+            return m_colors[LogLevel::e_DEBUG] + "DEBUG" + ansi_colors::color_to_string( ansi_colors::e_reset );
+        case LogLevel::e_INFO:
+            return m_colors[LogLevel::e_INFO] + "INFO" + ansi_colors::color_to_string( ansi_colors::e_reset );
+        case LogLevel::e_WARNING:
+            return m_colors[LogLevel::e_WARNING] + "WARNING" + ansi_colors::color_to_string( ansi_colors::e_reset );
+        case LogLevel::e_ERROR:
+            return m_colors[LogLevel::e_ERROR] + "ERROR" + ansi_colors::color_to_string( ansi_colors::e_reset );
+        default:
+            break;
+    }
+
+
+}
 
 
