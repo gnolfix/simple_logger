@@ -20,7 +20,6 @@ main( void )
 
     std::cout << "First test: " << TEST( empty_log_file() ) << '\n';
     std::cout << "Second test: " << TEST( cannot_open() ) << '\n';
-
     return 0;
 }
 
@@ -29,7 +28,7 @@ cannot_open()
 {
     try
     {
-        logger_config conf{true, "asdf/asdf/asdf/log.svo"};
+        logger_config conf{true, false ,"asdf/asdf/asdf/log.svo"};
         Logger logger( conf );
     }
     catch ( const FileOpenError &e)
@@ -45,7 +44,7 @@ empty_log_file()
 {
     try
     {
-        logger_config conf{true, ""};
+        logger_config conf{true, true ,""};
         Logger logger( conf );
     }
     catch ( const FileNameError &e )

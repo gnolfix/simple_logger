@@ -2,11 +2,12 @@
 // Created by gnolfix on 9/16/2025.
 //
 #pragma once
+#include <map>
 #include <string>
 #include <fstream>
 
+#include "LogFormat.h"
 #include "LoggerError.h"
-#include <map>
 
 enum class LogLevel
 {
@@ -41,6 +42,7 @@ struct
 logger_config
 {
         bool in_file = false;
+        bool no_ansi = false;
         std::string file_name = {0};
         std::map<LogLevel, std::string> colors =
         {
@@ -82,6 +84,7 @@ class Logger
         void DEBUG(const std::string& text);
 
         void set_current_log_level(LogLevel l_log_level);
+        void set_log_format(std::string format);
     private:
 
         logger_config m_log_conf;
@@ -89,6 +92,7 @@ class Logger
         std::map<LogLevel, std::string> m_colors = m_log_conf.colors;
         std::ofstream m_log_file;
         LogLevel m_current_log_level = LogLevel::e_DEBUG;
+        LogFormat m_format{};
 
         std::string level_to_string( LogLevel l_log_level );
         void logger( LogLevel l_log_level, const std::string& text );

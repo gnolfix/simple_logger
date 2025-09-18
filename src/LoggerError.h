@@ -7,18 +7,33 @@
 
 class LoggerError : public std::runtime_error
 {
+
     public:
         using std::runtime_error::runtime_error;
 };
 
-class FileOpenError : LoggerError
+class FileOpenError : public LoggerError
 {
 
     public:
         using LoggerError::LoggerError;
 };
 
-class FileNameError : LoggerError
+class FileNameError : public LoggerError
+{
+
+    public:
+        using LoggerError::LoggerError;
+};
+
+class InvalidMacro : public LoggerError
+{
+
+    public:
+        using LoggerError::LoggerError;
+};
+
+class FormatError : public LoggerError
 {
 
     public:

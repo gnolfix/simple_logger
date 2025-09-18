@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(SOURCES
             ${SRC_DIR}/Logger.cpp
+            ${SRC_DIR}/LogFormat.cpp
             )
 
 add_library(simple_logger STATIC ${SOURCES})

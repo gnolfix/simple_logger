@@ -6,10 +6,11 @@
 #include <iostream>
 #include <chrono>
 #include <format>
+#include <utility>
 
 #ifdef _WIN32
 #include <windows.h>
-
+#undef ERROR
 void
 enable_ansi_colors ()
 {
@@ -26,21 +27,7 @@ enable_ansi_colors ()
 }
 #endif
 
-std::string
-current_date_time ()
-{
-    auto now = std::chrono::system_clock::now();
-    time_t now_c = std::chrono::system_clock::to_time_t( now );
-    std::tm tm{};
-#ifdef _WIN32
-    localtime_s( &tm, &now_c );
-#else
-    localtime_r( &now_c, &tm );
-#endif
-    std::chrono::sys_time< std::chrono::seconds > tp = std::chrono::sys_time<
-        std::chrono::seconds >( std::chrono::seconds( now_c ) );
-    return std::format( "{:%Y-%m-%d %H:%M:%S}", tp );
-}
+
 
 std::string
 ansi_colors::color_to_string ( colors_codes code )
@@ -63,29 +50,79 @@ Logger::INFO ( const std::string &text )
 };
 
 void
+Logger::DEBUG ( const std::string &text )
+{
+    logger( LogLevel::e_DEBUG, text );
+};
+
+void
+Logger::WARNING ( const std::string &text )
+{
+    logger( LogLevel::e_WARNING, text );
+};
+
+void
+Logger::ERROR ( const std::string &text )
+{
+    logger( LogLevel::e_ERROR, text );
+};
+
+void
 Logger::logger ( LogLevel l_log_level, const std::string &text )
 {
     if ( l_log_level < m_current_log_level )
         return;
-
+    std::string log = m_format.format_to_string( level_to_string( l_log_level ), text );
+    if (l_log_level > LogLevel::e_INFO)
+        std::cerr << log << "\n";
+    else
+        std::cout << log << "\n";
 };
+
+void
+Logger::set_log_format ( std::string format )
+{
+    m_format = LogFormat{std::move(format)};
+}
+
 
 std::string
 Logger::level_to_string ( LogLevel l_log_level )
 {
-    switch ( l_log_level )
+    if ( m_log_conf.no_ansi )
     {
-        case LogLevel::e_DEBUG:
-            return m_colors[LogLevel::e_DEBUG] + "DEBUG" + ansi_colors::color_to_string( ansi_colors::e_reset );
-        case LogLevel::e_INFO:
-            return m_colors[LogLevel::e_INFO] + "INFO" + ansi_colors::color_to_string( ansi_colors::e_reset );
-        case LogLevel::e_WARNING:
-            return m_colors[LogLevel::e_WARNING] + "WARNING" + ansi_colors::color_to_string( ansi_colors::e_reset );
-        case LogLevel::e_ERROR:
-            return m_colors[LogLevel::e_ERROR] + "ERROR" + ansi_colors::color_to_string( ansi_colors::e_reset );
-        default:
-            break;
+        switch ( l_log_level )
+        {
+            case LogLevel::e_DEBUG:
+                return "DEBUG";
+            case LogLevel::e_INFO:
+                return "INFO";
+            case LogLevel::e_WARNING:
+                return "WARNING";
+            case LogLevel::e_ERROR:
+                return "ERROR";
+            default:
+                break;
+        }
     }
+    else
+        switch ( l_log_level )
+        {
+            case LogLevel::e_DEBUG:
+                return m_colors[LogLevel::e_DEBUG] + "DEBUG" +
+                       ansi_colors::color_to_string( ansi_colors::e_reset );
+            case LogLevel::e_INFO:
+                return m_colors[LogLevel::e_INFO] + "INFO" +
+                       ansi_colors::color_to_string( ansi_colors::e_reset );
+            case LogLevel::e_WARNING:
+                return m_colors[LogLevel::e_WARNING] + "WARNING" +
+                       ansi_colors::color_to_string( ansi_colors::e_reset );
+            case LogLevel::e_ERROR:
+                return m_colors[LogLevel::e_ERROR] + "ERROR" +
+                       ansi_colors::color_to_string( ansi_colors::e_reset );
+            default:
+                break;
+        }
 
 
 }
