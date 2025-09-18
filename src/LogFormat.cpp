@@ -57,17 +57,14 @@ std::string
 LogFormat::format_to_string (  const std::string& log_level,
     const std::string& message)
 {
- // "%L [%D] %S"
     std::string s;
 
     auto it = format.begin();
 
     while (it != format.end()) {
-        // ищем следующий '%'
         auto macro_it = std::find_if(it, format.end(),
             [](char c){ return c == '%'; });
 
-        // копируем всё до макроса
         s.append(it, macro_it);
 
         if (macro_it != format.end() && (macro_it + 1) != format.end()) {
@@ -78,9 +75,9 @@ LogFormat::format_to_string (  const std::string& log_level,
                 case 'S': s += message; break;
                 default: throw std::runtime_error("Invalid macro");
             }
-            it = macro_it + 2; // пропускаем макрос
+            it = macro_it + 2;
         } else {
-            break; // больше макросов нет
+            break;
         }
     }
     return s;
