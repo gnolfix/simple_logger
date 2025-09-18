@@ -77,6 +77,10 @@ Logger::logger ( LogLevel l_log_level, const std::string &text )
         std::cerr << log << "\n";
     else
         std::cout << log << "\n";
+    if ( m_log_conf.in_file )
+    {
+        m_log_file << log;
+    }
 };
 
 void

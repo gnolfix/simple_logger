@@ -71,7 +71,7 @@ LogFormat::format_to_string (  const std::string& log_level,
         s.append(it, macro_it);
 
         if (macro_it != format.end() && (macro_it + 1) != format.end()) {
-            char macro = *(macro_it + 1);
+            char macro = std::toupper( *(macro_it + 1) );
             switch (macro) {
                 case 'D': s += current_date_time(); break;
                 case 'L': s += log_level; break;
